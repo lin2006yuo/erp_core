@@ -29,8 +29,8 @@
                     label="操作"
                 >
                     <template slot-scope="scope">
-                        <el-button type="danger" size="small" @click="delete_worker">删除</el-button>
                         <el-button size="small" @click="show_modal(0, scope.row)">修改</el-button>
+                        <el-button type="danger" size="small" @click="delete_worker">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -38,7 +38,6 @@
         <add-modal
                 v-model="isShowAddModal"
                 :form="form"
-                :clear="clear"
                 :type="editType"
                 :add="add_worker"
                 :modify="modify_worker"
@@ -55,11 +54,6 @@
             return {
                 isShowAddModal: false,
                 form: {
-                    name: '',
-                    desc: '',
-                    token: ''
-                },
-                clear: {
                     name: '',
                     desc: '',
                     token: ''
@@ -84,13 +78,11 @@
             add_worker() {
                 // add ajax
                 return new Promise((resolve) => {
-                    console.log(111)
-                    console.log(this.form)
                     setTimeout(() => {
                         resolve('添加成功')
-                    }, 1000)
+                    }, 3000)
                 }).then(res => {
-                    console.log(res)
+                    this.$message({type: 'success', message: res})
                 })
             },
             delete_worker() {
@@ -104,7 +96,13 @@
             },
             modify_worker() {
                 // modify ajax
-                console.log('modify', this.form)
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve('修改成功')
+                    }, 3000)
+                }).then(res => {
+                    this.$message({type: 'success', message: res})
+                })
             }
         },
         components: {

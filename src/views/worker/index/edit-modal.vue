@@ -22,8 +22,8 @@
             </el-form>
         </div>
         <span slot="footer">
-                <el-button v-if="type" size="mini" type="primary" @click.stop="handle_add">添加</el-button>
-                <el-button v-else size="mini" type="primary" @click.stop="handle_modify">修改</el-button>
+                <el-button v-if="type" size="mini" type="primary" @click.stop="handle_add" :loading="btnLoading">添加</el-button>
+                <el-button v-else size="mini" type="primary" @click.stop="handle_modify" :loading="btnLoading">修改</el-button>
                 <el-button size="mini" @click="handle_close">关闭</el-button>
             </span>
     </el-dialog>
@@ -34,18 +34,18 @@
         data(){
             return{
                 show:this.value,
-                tableData:[],
                 formRules: {
                     name: [
-                        { required: true, message: '请输入活动名称', trigger: 'blur' },
+                        { required: true, message: '请输入名称', trigger: 'blur' },
                     ],
                     desc: [
-                        { required: true, message: '请输入活动名称', trigger: 'blur' },
+                        { required: true, message: '请输入描述', trigger: 'blur' },
                     ],
                     token: [
-                        { required: true, message: '请输入活动名称', trigger: 'blur' },
+                        { required: true, message: '请输入token', trigger: 'blur' },
                     ]
-                }
+                },
+                btnLoading: false
             }
         },
         computed: {
@@ -63,12 +63,10 @@
             handle_add() {
                 this.$refs.addForm.validate(valid => {
                     if(valid) {
+                        this.btnLoading = true
                         this.add().then(res => {
-                            // this.show = false
-                            for (const key in this.form) {
-                               this.form[key] = ''
-                            }
-                            // this.form = {}
+                            this.btnLoading = false
+                            this.handle_close()
                             return res
                         })
                     } else {
@@ -79,7 +77,10 @@
             handle_modify() {
                 this.$refs.addForm.validate(valid => {
                     if(valid) {
-                        this.modify(res => {
+                        this.btnLoading = true
+                        this.modify().then(res => {
+                            this.btnLoading = false
+                            this.handle_close()
                             return res
                         })
                     } else {
@@ -88,8 +89,11 @@
                 })
             },
             reset_form() {
-                // this.form = { ...this.clear }
-                this.$refs.addForm && this.$refs.addForm.resetFields()
+                for (const key in this.form) {
+                    console.log(key)
+                    this.form[key] = ''
+                }
+                this.$refs.addForm && this.$refs.addForm.clearValidate()
             }
         },
         props:{
@@ -103,10 +107,6 @@
             },
             type: {   // 1添加 0修改
                 type: Number,
-                require: true
-            },
-            clear: {
-                type: Object,
                 require: true
             },
             add: {
